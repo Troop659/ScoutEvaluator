@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Scout Evaluation</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+<div class="container">
+    <h1>Scout Evaluation Form</h1>
+
+    <form id="evaluationForm" method = "POST" action="/calculate-score">
+    <div class="input-group">
+        <label>Scout Name: <input type="text" id="scoutName" /></label>
+        <label>Rank:
+            <select id="scoutRank">
+                {% for rank, req in ranks.items() %}
+                    <option value="{{ rank }}">
+                        {{ rank.title() }} ({{ req }}+ to pass)
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <br>
+
+    <div class="form-section">
+        {% for category in categories %}
+            <label>
+                {{ category.title() }}:
+                <input type="number" min="0" max="10" required data-category="{{ category }}">
+            </label>
+        {% endfor %}
+    </div>
+
+    <div id="adultsSection" class="form-section">
+        <h3>Adult Evaluations</h3>
+        <div id="adultsContainer"></div>
+        <button type="button" onclick="addAdult()">+ Add Adult</button>
+    </div>
+
+    <button type="submit">Submit</button>
+    </form>
+
+
+    <pre id="result"></pre>
+
+</div>
+
+<script>
+function addAdult() {
+  const container = document.getElementById('adultsContainer');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'adult-entry';
+  wrapper.innerHTML = `
+    <input type="text" placeholder="Adult Name" class="adult-name">
+    <input type="number" placeholder="Rating (1-10)" min="1" max="10" class="adult-rating">
+    <button type="button" class="remove-adult-btn">Remove</button>
+  `;
+
+  wrapper.querySelector('.remove-adult-btn').onclick = () => wrapper.remove();
+  container.appendChild(wrapper);
+}
+
+document.getElementById("evaluationForm").onsubmit = async e => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const data = new FormData();
+
+    // Get name
+    const nameInput = document.getElementById("scoutName");
+    data.append("name", nameInput.value);
+
+    // Get rank
+    const rankSelect = document.getElementById("scoutRank");
+    data.append("rank", rankSelect.value);
+
+    // Get category scores
+    form.querySelectorAll("input[data-category]").forEach(input => {
+        data.append(input.dataset.category, input.value);
+    });
+
+    // Get adult names and ratings
+    const adults = form.querySelectorAll(".adult-entry");
+    adults.forEach(adultDiv => {
+        const nameInput = adultDiv.querySelector(".adult-name");
+        const ratingInput = adultDiv.querySelector(".adult-rating");
+        if (nameInput.value.trim() && ratingInput.value.trim()) {
+            data.append("adult_name", nameInput.value.trim());
+            data.append("adult_rating", ratingInput.value.trim());
+        }
+    });
+
+    const res = await fetch("/calculate-score", {
+        method: "POST",
+        body: data
+    });
+
+    document.getElementById("result").textContent = JSON.stringify(await res.json(), null, 2);
+};
+</script>
+
+</body>
+
+</html>
