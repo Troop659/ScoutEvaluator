@@ -101,7 +101,19 @@ document.getElementById("evaluationForm").onsubmit = async e => {
         body: data
     });
 
-    document.getElementById("result").textContent = JSON.stringify(await res.json(), null, 2);
+    // Output
+    const result = await res.json();
+
+    const passFail = result.passed ? "✅ PASS" : "❌ FAIL";
+    const scoreStr = result.score.toFixed(2);
+    const rankReqStr = result.rank_req.toFixed(2);
+
+    document.getElementById("result").textContent = `
+    ${passFail} Scout: ${scoutName.value}
+    Rank: ${rankSelect.value.charAt(0).toUpperCase() + rankSelect.value.slice(1)}
+    Score: ${scoreStr} / ${rankReqStr}
+    Result: ${result[2] ? "PASS" : "FAIL"}
+        `;
 };
 </script>
 

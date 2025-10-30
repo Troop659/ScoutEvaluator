@@ -44,9 +44,11 @@ async def calculate_score():
     ]
     adult_info = list(zip(adult_names, adult_values))
 
-    return {
-        "score": calculate_score_helper(rank, cat_values, adult_values)
-    }
+    score, rank_req, passed = calculate_score_helper(
+        rank, cat_values, adult_values
+    )
+
+    return {"score": score, "rank_req": rank_req, "passed": passed}
 
 
 def calculate_score_helper(
