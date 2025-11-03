@@ -1,1 +1,4 @@
 .venv
+/scout-service-account.json
+/test.py
+/client_secret.json
