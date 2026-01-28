@@ -90,7 +90,7 @@ function calculateScore() {
 
     if (errors.length > 0) {
         resultBox.classList.add("error");
-        resultBox.textContent = "⚠️ Errors:\n" + errors.join('\n');
+        resultBox.textContent = "Errors:\n" + errors.join('\n');
         return;
     }
 
@@ -120,7 +120,7 @@ function calculateScore() {
     const finalScore = (total / weightSum) * 10;
     const passScore = config.ranks[rank];
 
-    const resultText = `${finalScore >= passScore ? '✅' : '❌'} Scout: ${name}
+    const resultText = `Scout: ${name}
 Rank: ${rank}
 Score: ${finalScore.toFixed(2)} / ${passScore.toFixed(2)}
 Result: ${finalScore >= passScore ? 'PASS' : 'FAIL'}`;
@@ -213,7 +213,7 @@ function generateReport() {
     const passScore = config.ranks[rank];
 
     report += `\nFinal Score: ${finalScore.toFixed(2)} / ${passScore.toFixed(2)}\n`;
-    report += `Result: ${finalScore >= passScore ? 'PASS ✅' : 'FAIL ❌'}\n`;
+    report += `Result: ${finalScore >= passScore ? 'PASS' : 'FAIL'}\n`;
 
     return report;
 }
